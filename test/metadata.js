@@ -36,6 +36,27 @@ describe('metadata', function () {
     assert.equal(font.bbox.maxY, 2189);
   });
 
+  it('reads the vertical metrics from vhea', function () {
+    // The 32-bit version comes first, so the vertical ascender and the number
+    // of vmtx metrics follow it, and the advance matches hb-shape's:
+    let font = fontkit.openSync(
+      new URL('data/fonttest/TestGVAROne.ttf', import.meta.url),
+    );
+    assert.equal(font.vhea.ascent, 500);
+    assert.equal(font.vhea.numberOfMetrics, 3);
+    assert.equal(font.glyphsForString('彌')[0].advanceHeight, 1000);
+  });
+
+  it('gives empty CFF glyphs an empty box', function () {
+    let font = fontkit.openSync(
+      new URL('data/SourceSansPro/SourceSansPro-Regular.otf', import.meta.url),
+    );
+    let { cbox, bbox } = font.glyphForCodePoint(0x20).path;
+    for (let box of [cbox, bbox]) {
+      assert.deepEqual([box.minX, box.minY, box.maxX, box.maxY], [0, 0, 0, 0]);
+    }
+  });
+
   it('exposes tables directly', function () {
     let iterable = ['head', 'hhea', 'OS/2', 'post'];
     for (let i = 0; i < iterable.length; i++) {
