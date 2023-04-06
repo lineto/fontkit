@@ -57,6 +57,18 @@ describe('metadata', function () {
     }
   });
 
+  it('uses the typo metrics when the font asks for them', function () {
+    // Mada sets USE_TYPO_METRICS, and its typo line gap differs from hhea's.
+    // The values match HarfBuzz's font extents:
+    let mada = fontkit.openSync(
+      new URL('data/Mada/Mada-Regular.subset1.ttf', import.meta.url),
+    );
+    assert.equal(mada.ascent, 900);
+    assert.equal(mada.descent, -300);
+    assert.equal(mada.lineGap, 100);
+    assert.equal(mada.lineHeight, 1300);
+  });
+
   it('exposes tables directly', function () {
     let iterable = ['head', 'hhea', 'OS/2', 'post'];
     for (let i = 0; i < iterable.length; i++) {

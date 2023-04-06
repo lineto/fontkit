@@ -3,6 +3,7 @@
 ### Unreleased
 
 - Read the vertical metrics from vhea correctly, and give empty glyph paths an empty box
+- Respect the useTypoMetrics flag in ascent, descent and lineGap, and add lineHeight
 - Fix canonical composition fallback, Arabic mark ordering, and positioning in fonts without GSUB
 - Fix extra quadratic segments in TrueType contours with off-curve endpoints
 - [BREAKING] Browser build is now ESM-only
