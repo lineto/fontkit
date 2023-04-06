@@ -49,9 +49,11 @@ describe('issues', function () {
       let font = openFont();
       let glyph = font.glyphForCodePoint(0x20);
       assert.strictEqual(glyph.advanceWidth, 532);
-      assert.strictEqual(glyph.advanceHeight, 2059);
+      // Without vmtx, the vertical advance falls back to the font's ascent and
+      // descent, as in HarfBuzz (hhea here, as useTypoMetrics isn't set):
+      assert.strictEqual(glyph.advanceHeight, 2789);
       let metrics = glyph._getMetrics();
-      assert.strictEqual(metrics.topBearing, 1567);
+      assert.strictEqual(metrics.topBearing, 2189);
       assert.ok(Object.values(metrics).every(Number.isFinite));
     });
 
