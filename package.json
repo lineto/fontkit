@@ -15,6 +15,7 @@
     "test": "run-s build mocha",
     "mocha": "mocha",
     "build": "parcel build",
+    "watch": "parcel watch",
     "prepublish": "run-s clean trie:** build",
     "trie:data": "node src/opentype/shapers/generate-data.js",
     "trie:use": "node src/opentype/shapers/gen-use.js",
