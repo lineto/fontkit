@@ -556,7 +556,7 @@ export default class TTFFont {
    */
   @cache
   get _metricsVariationAdjustments() {
-    if (!this.MVAR) {
+    if (!this.MVAR || !this._variationProcessor) {
       return {}
     }
 
