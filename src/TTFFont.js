@@ -634,7 +634,7 @@ export default class TTFFont {
    * @return {Object<string, number>} An object where the keys are value tags and the values are the corresponding adjustments.
    */
   get _metricsVariationAdjustments() {
-    if (!this.MVAR) {
+    if (!this.MVAR || !this._variationProcessor) {
       return {};
     }
 
