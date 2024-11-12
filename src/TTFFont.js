@@ -547,6 +547,34 @@ export default class TTFFont {
     return new GlyphVariationProcessor(this, variationCoords);
   }
 
+  /**
+   * Returns the metrics variation adjustments for this font.
+   * 
+   * @see {@link https://learn.microsoft.com/en-us/typography/opentype/spec/mvar}
+   * 
+   * @return {Object<string, number>} An object where the keys are value tags and the values are the corresponding adjustments.
+   */
+  @cache
+  get _metricsVariationAdjustments() {
+    if (!this.MVAR) {
+      return {}
+    }
+
+    let deltas = {}
+
+    for (let record of this.MVAR.valueRecords) {
+      let valueTag = record.valueTag
+      let adjustment = this._variationProcessor.getDelta(
+        this.MVAR.itemVariationStore,
+        record.deltaSetOuterIndex,
+        record.deltaSetInnerIndex
+      )
+      deltas[valueTag] = adjustment
+    }
+    
+    return deltas
+  }
+
   // Standardized format plugin API
   getFont(name) {
     return this.getVariation(name);
