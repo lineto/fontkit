@@ -63,7 +63,7 @@ export function decodeBase64(base64) {
   return bytes;
 }
 
-export class Version16Dot16 {
+class Version16Dot16 {
   fromBuffer(buffer) {
     let stream = new DecodeStream(buffer);
     return this.decode(stream);
