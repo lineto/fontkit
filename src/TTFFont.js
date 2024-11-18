@@ -101,10 +101,15 @@ export default class TTFFont {
     // Use the same approach as FreeType
     // https://gitlab.freedesktop.org/freetype/freetype/-/blob/4d8db130ea4342317581bab65fc96365ce806b77/src/sfnt/sfobjs.c#L1310
 
+    let applyAdjustment = (value, valueTag) => {
+      let adjustment = this._metricsVariationAdjustments[valueTag]
+      return adjustment ? value + adjustment : value
+    };
+
     if (useTypoMetrics) {
-      ascent = os2.typoAscender;
-      descent = os2.typoDescender;
-      lineGap = os2.typoLineGap;
+      ascent = applyAdjustment(os2.typoAscender, 'hasc');
+      descent = applyAdjustment(os2.typoDescender, 'hdsc');
+      lineGap = applyAdjustment(os2.typoLineGap, 'hlgp');
       lineHeight = ascent - descent + lineGap;
     } else {
       ascent = hhea.ascent;
@@ -115,18 +120,21 @@ export default class TTFFont {
 
     if (!ascent || !descent) {
       if (os2.typoAscender || os2.typoDescender) {
-        ascent = os2.typoAscender;
-        descent = os2.typoDescender;
-        lineGap = os2.typoLineGap;
+        ascent = applyAdjustment(os2.typoAscender, 'hasc');
+        descent = applyAdjustment(os2.typoDescender, 'hdsc');
+        lineGap = applyAdjustment(os2.typoLineGap, 'hlgp');
         lineHeight = ascent - descent + lineGap;
       } else {
-        ascent = os2.winAscent;
-        descent = -os2.winDescent;
+        ascent = applyAdjustment(os2.winAscent, 'hcla');
+        descent = -applyAdjustment(os2.winDescent, 'hcld');
         lineHeight = ascent - descent;
       }
     }
+    
+    let capHeight = os2 ? applyAdjustment(os2.capHeight, 'cpht') : this.ascent;
+    let xHeight = os2 ? applyAdjustment(os2.xHeight, 'xhgt') : 0;
 
-    return this._metrics = {ascent, descent, lineGap, lineHeight};
+    return this._metrics = {ascent, descent, lineGap, lineHeight, capHeight, xHeight};
   }
 
   /**
@@ -262,8 +270,7 @@ export default class TTFFont {
    * @type {number}
    */
   get capHeight() {
-    let os2 = this['OS/2'];
-    return os2 ? os2.capHeight : this.ascent;
+    return this._getMetrics().capHeight;
   }
 
   /**
@@ -272,8 +279,7 @@ export default class TTFFont {
    * @type {number}
    */
   get xHeight() {
-    let os2 = this['OS/2'];
-    return os2 ? os2.xHeight : 0;
+    return this._getMetrics().xHeight;
   }
 
   /**
