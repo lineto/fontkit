@@ -73,6 +73,9 @@ export default class Glyph {
       var { advance: advanceHeight, bearing: topBearing } =
         this._getTableMetrics(this._font.vmtx);
     } else {
+      if (typeof cbox === 'undefined' || cbox === null) {
+        ({ cbox } = this);
+      }
       var advanceHeight = Math.abs(this._font.ascent - this._font.descent);
       var topBearing = this._font.ascent - cbox.maxY;
     }
