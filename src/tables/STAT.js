@@ -56,7 +56,7 @@ export default new STATStruct(r.uint32, {
   header: {
     designAxisSize:           r.uint16,
     designAxisCount:          r.uint16,
-    offsetToDesignAxes:       new r.Pointer(r.uint32, new r.Array(AxisRecord, 'designAxisCount')),
+    designAxes:               new r.Pointer(r.uint32, new r.Array(AxisRecord, 'designAxisCount')),
     axisValueCount:           r.uint16,
     offsetToAxisValueOffsets: new r.Pointer(r.uint32, AxisValueArray),
   },
