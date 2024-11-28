@@ -169,7 +169,7 @@ describe('variations', function () {
       assert.equal(stat.axisValueCount, 9);
       assert.equal(getFeatureName(stat.elidedFallbackNameID), 'Regular');
 
-      let axes = font.STAT.offsetToDesignAxes;
+      let axes = font.STAT.designAxes;
       assert.equal(axes.length, 3);
       assert.equal(axes[0].axisTag, 'YTUC');
       assert.equal(getFeatureName(axes[0].axisNameID), 'Uppercase Height');
