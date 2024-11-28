@@ -168,17 +168,13 @@ describe('variations', function () {
       assert.equal(stat.designAxisCount, 3);
       assert.equal(stat.axisValueCount, 9);
       assert.equal(getFeatureName(stat.elidedFallbackNameID), 'Regular');
-    });
 
-    it('should have correct design axes', function() {
       let axes = font.STAT.offsetToDesignAxes;
       assert.equal(axes.length, 3);
       assert.equal(axes[0].axisTag, 'YTUC');
       assert.equal(getFeatureName(axes[0].axisNameID), 'Uppercase Height');
       assert.equal(axes[0].axisOrdering, 1);
-    });
 
-    it('should have correct axis values', function() {
       let values = font.STAT.axisValues;
       assert.equal(values.length, 9);
       assert.equal(values[0].version, 1);
@@ -186,6 +182,24 @@ describe('variations', function () {
       assert.equal(values[0].flags, 0);
       assert.equal(getFeatureName(values[0].valueNameID), 'Low');
       assert.equal(values[0].value, 100);
+    });
+
+    it('should use the MVAR table for variation metrics', function() {
+      let variation = font.getVariation('High 900 Descender')
+
+      const adjustments = variation._metricsVariationAdjustments;
+      assert.equal(Math.round(adjustments.cpht * 100) / 100, 161.54);
+      assert.equal(Math.round(adjustments.hasc * 100) / 100, 161.54);
+      assert.equal(Math.round(adjustments.hdsc * 100) / 100, -104.46);
+      assert.equal(Math.round(adjustments.xhgt * 100) / 100, 184.54);
+
+      const metrics = variation._getMetrics();
+      assert.equal(Math.round(metrics.ascent * 100) / 100, 1157.54);
+      assert.equal(Math.round(metrics.descent * 100) / 100, -308.46);
+      assert.equal(metrics.lineGap, 0);
+      assert.equal(metrics.lineHeight, 1466);
+      assert.equal(Math.round(metrics.capHeight * 100) / 100, 953.54);
+      assert.equal(Math.round(metrics.xHeight * 100) / 100, 812.54);
     });
   });
 });
