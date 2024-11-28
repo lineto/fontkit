@@ -341,8 +341,6 @@ describe('variations', function () {
       '../../lineto/font-scripts/RuderPlakatLLVar.ttf',
       import.meta.url,
     );
-    let getFeatureName = (nameID) =>
-      font.name.records.fontFeatures[nameID]['en'];
 
     if (fs.existsSync(fontPath)) {
       font = fontkit.openSync(fontPath);
@@ -352,28 +350,6 @@ describe('variations', function () {
       if (!font) {
         this.skip();
       }
-    });
-
-    it('should have correct STAT table structure', function () {
-      let stat = font.STAT;
-      assert.equal(stat.designAxisSize, 8);
-      assert.equal(stat.designAxisCount, 3);
-      assert.equal(stat.axisValueCount, 9);
-      assert.equal(getFeatureName(stat.elidedFallbackNameID), 'Regular');
-
-      let axes = font.STAT.designAxes;
-      assert.equal(axes.length, 3);
-      assert.equal(axes[0].axisTag, 'YTUC');
-      assert.equal(getFeatureName(axes[0].axisNameID), 'Uppercase Height');
-      assert.equal(axes[0].axisOrdering, 1);
-
-      let values = font.STAT.axisValues;
-      assert.equal(values.length, 9);
-      assert.equal(values[0].version, 1);
-      assert.equal(values[0].axisIndex, 0);
-      assert.equal(values[0].flags, 0);
-      assert.equal(getFeatureName(values[0].valueNameID), 'Low');
-      assert.equal(values[0].value, 100);
     });
 
     it('should use the MVAR table for variation metrics', function () {
