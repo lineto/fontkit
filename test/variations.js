@@ -333,4 +333,51 @@ describe('variations', function () {
       assert.equal(Math.floor(run.positions[0].yOffset), 542);
     });
   });
+
+  describe('RuderPlakatLLVar', function () {
+    let font;
+    // A Lineto font, read from a lineto checkout next to this repository:
+    let fontPath = new URL(
+      '../../lineto/font-scripts/RuderPlakatLLVar.ttf',
+      import.meta.url,
+    );
+    let getFeatureName = (nameID) =>
+      font.name.records.fontFeatures[nameID]['en'];
+
+    if (fs.existsSync(fontPath)) {
+      font = fontkit.openSync(fontPath);
+    }
+
+    beforeEach(function () {
+      if (!font) {
+        this.skip();
+      }
+    });
+
+    it('should have correct STAT table structure', function () {
+      let stat = font.STAT;
+      assert.equal(stat.designAxisSize, 8);
+      assert.equal(stat.designAxisCount, 3);
+      assert.equal(stat.axisValueCount, 9);
+      assert.equal(getFeatureName(stat.elidedFallbackNameID), 'Regular');
+    });
+
+    it('should have correct design axes', function () {
+      let axes = font.STAT.offsetToDesignAxes;
+      assert.equal(axes.length, 3);
+      assert.equal(axes[0].axisTag, 'YTUC');
+      assert.equal(getFeatureName(axes[0].axisNameID), 'Uppercase Height');
+      assert.equal(axes[0].axisOrdering, 1);
+    });
+
+    it('should have correct axis values', function () {
+      let values = font.STAT.axisValues;
+      assert.equal(values.length, 9);
+      assert.equal(values[0].version, 1);
+      assert.equal(values[0].axisIndex, 0);
+      assert.equal(values[0].flags, 0);
+      assert.equal(getFeatureName(values[0].valueNameID), 'Low');
+      assert.equal(values[0].value, 100);
+    });
+  });
 });
