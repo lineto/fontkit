@@ -173,9 +173,19 @@ export default class OTProcessor {
   }
 
   variationConditionsMatch(conditions, coords) {
+    // Tolerance to absorb floating-point fuzz from normalize/avar — the user's
+    // default axis value should normalize to exactly 0, but accumulated
+    // rounding can yield e.g. 3.4e-19, which would fail a strict `<= 0` filter
+    // range max even though the OT spec considers the boundary inclusive. 2^-30
+    // ≈ 1e-9 — well below any meaningful 14-bit F2DOT14 condition resolution,
+    // well above typical drift.
+    const EPSILON = 1 / (1 << 30);
     return conditions.every(condition => {
       let coord = condition.axisIndex < coords.length ? coords[condition.axisIndex] : 0;
-      return condition.filterRangeMinValue <= coord && coord <= condition.filterRangeMaxValue;
+      return (
+        condition.filterRangeMinValue - EPSILON <= coord &&
+        coord <= condition.filterRangeMaxValue + EPSILON
+      );
     });
   }
 
