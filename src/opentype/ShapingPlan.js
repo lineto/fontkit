@@ -1,5 +1,9 @@
 import * as Script from '../layout/Script';
 
+// Features DefaultShaper pre-registers as local (fraction-context only) but
+// the user can explicitly request globally via setFeatureOverrides.
+const FORCE_GLOBAL_OVERRIDES = new Set(['frac', 'numr', 'dnom']);
+
 /**
  * ShapingPlans are used by the OpenType shapers to store which
  * features should by applied, and in what order to apply them.
@@ -79,6 +83,15 @@ export default class ShapingPlan {
       for (let tag in features) {
         if (features[tag]) {
           this.add(tag);
+          // Promote to global only for features DefaultShaper deliberately
+          // pre-registers as local (frac/numr/dnom — fraction-context-only by
+          // default). User explicit overrides for these should fire globally.
+          // Indic-shaper local features (rphf/half/blwf/pref/ abvf/pstf/cfar)
+          // stay local — they apply only to glyphs the syllable analysis tags,
+          // and forcing them global breaks cluster shaping.
+          if (FORCE_GLOBAL_OVERRIDES.has(tag)) {
+            this.globalFeatures[tag] = true;
+          }
         } else if (this.allFeatures[tag] != null) {
           let stage = this.stages[this.allFeatures[tag]];
           stage.splice(stage.indexOf(tag), 1);
