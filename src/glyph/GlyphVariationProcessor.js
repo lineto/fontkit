@@ -31,20 +31,21 @@ export default class GlyphVariationProcessor {
   normalizeCoords(coords) {
     // the default mapping is linear along each axis, in two segments:
     // from the minValue to defaultValue, and from defaultValue to maxValue.
+    // Guard each division against a zero range explicitly rather than
+    // adding Number.EPSILON to both numerator and denominator — that hack
+    // shifts the result by ~1e-16 even for normal axes, breaking strict
+    // equality with FeatureVariations boundary conditions stored in design
+    // space (filterRangeMin/Max).
+    const safeDiv = (n, d) => (d === 0 ? 0 : n / d);
     let normalized = [];
     for (var i = 0; i < this.font.fvar.axis.length; i++) {
       let axis = this.font.fvar.axis[i];
-      if (coords[i] < axis.defaultValue) {
-        normalized.push(
-          (coords[i] - axis.defaultValue + Number.EPSILON) /
-            (axis.defaultValue - axis.minValue + Number.EPSILON),
-        );
-      } else {
-        normalized.push(
-          (coords[i] - axis.defaultValue + Number.EPSILON) /
-            (axis.maxValue - axis.defaultValue + Number.EPSILON),
-        );
-      }
+      const numerator = coords[i] - axis.defaultValue;
+      const denominator =
+        coords[i] < axis.defaultValue
+          ? axis.defaultValue - axis.minValue
+          : axis.maxValue - axis.defaultValue;
+      normalized.push(safeDiv(numerator, denominator));
     }
 
     // if there is an avar table, the normalized value is calculated
@@ -57,12 +58,11 @@ export default class GlyphVariationProcessor {
           if (j >= 1 && normalized[i] < pair.fromCoord) {
             let prev = segment.correspondence[j - 1];
             normalized[i] =
-              ((normalized[i] - prev.fromCoord) *
-                (pair.toCoord - prev.toCoord) +
-                Number.EPSILON) /
-                (pair.fromCoord - prev.fromCoord + Number.EPSILON) +
-              prev.toCoord;
-
+              safeDiv(
+                (normalized[i] - prev.fromCoord) *
+                  (pair.toCoord - prev.toCoord),
+                pair.fromCoord - prev.fromCoord,
+              ) + prev.toCoord;
             break;
           }
         }
