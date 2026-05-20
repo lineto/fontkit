@@ -200,26 +200,28 @@ export default class OTProcessor {
 
     for (let { feature, lookup } of lookups) {
       this.currentFeature = feature;
+
+      let direction = this.isReverseLookup(lookup) ? -1 : 1;
+      let startIndex = direction === -1 ? glyphs.length - 1 : 0;
+
       this.glyphIterator.reset(
         lookup.flags,
-        0,
+        startIndex,
         this.getMarkFilteringSet(lookup),
       );
 
-      while (this.glyphIterator.index < glyphs.length) {
-        if (!(feature in this.glyphIterator.cur.features)) {
-          this.glyphIterator.next();
-          continue;
-        }
-
-        for (let table of lookup.subTables) {
-          let res = this.applyLookup(lookup.lookupType, table);
-          if (res) {
-            break;
+      while (
+        this.glyphIterator.index >= 0 &&
+        this.glyphIterator.index < glyphs.length
+      ) {
+        if (feature in this.glyphIterator.cur.features) {
+          for (let table of lookup.subTables) {
+            if (this.applyLookup(lookup.lookupType, table)) {
+              break;
+            }
           }
         }
-
-        this.glyphIterator.next();
+        this.glyphIterator.move(direction);
       }
     }
   }
@@ -230,6 +232,11 @@ export default class OTProcessor {
   // determine their own continuation after the matched input sequence.
   applyLookup(lookup, table) {
     throw new Error('applyLookup must be implemented by subclasses');
+  }
+
+  // Return whether a lookup is applied right-to-left
+  isReverseLookup(lookup) {
+    return false;
   }
 
   applyLookupList(lookupRecords, inputLength) {
