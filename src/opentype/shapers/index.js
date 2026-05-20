@@ -2,6 +2,7 @@ import DefaultShaper from './DefaultShaper';
 import ArabicShaper from './ArabicShaper';
 import HangulShaper from './HangulShaper';
 import IndicShaper from './IndicShaper';
+import MyanmarShaper from './MyanmarShaper';
 import UniversalShaper from './UniversalShaper';
 
 const SHAPERS = {
@@ -35,6 +36,9 @@ const SHAPERS = {
   telu: IndicShaper,     // Telugu
   tel2: IndicShaper,     // Telugu
   khmr: IndicShaper,     // Khmer
+
+  mymr: MyanmarShaper,   // Myanmar (old spec)
+  mym2: MyanmarShaper,   // Myanmar
 
   bali: UniversalShaper, // Balinese
   batk: UniversalShaper, // Batak
