@@ -199,7 +199,11 @@ export default class OTProcessor {
 
     for (let { feature, lookup } of lookups) {
       this.currentFeature = feature;
-      this.glyphIterator.reset(lookup.flags);
+      this.glyphIterator.reset(
+        lookup.flags,
+        0,
+        this.getMarkFilteringSet(lookup),
+      );
 
       while (this.glyphIterator.index < glyphs.length) {
         if (!(feature in this.glyphIterator.cur.features)) {
@@ -229,6 +233,7 @@ export default class OTProcessor {
 
   applyLookupList(lookupRecords, inputLength) {
     let options = this.glyphIterator.options;
+    let markFilteringSet = this.glyphIterator.markFilteringSet;
     let glyphIndex = this.glyphIterator.index;
 
     // Index just past the matched input sequence, moved as the
@@ -237,13 +242,17 @@ export default class OTProcessor {
 
     for (let lookupRecord of lookupRecords) {
       // Reset flags and find glyph index for this lookup record
-      this.glyphIterator.reset(options, glyphIndex);
+      this.glyphIterator.reset(options, glyphIndex, markFilteringSet);
       this.glyphIterator.increment(lookupRecord.sequenceIndex);
       let index = this.glyphIterator.index;
 
       // Get the lookup and setup flags for subtables
       let lookup = this.table.lookupList.get(lookupRecord.lookupListIndex);
-      this.glyphIterator.reset(lookup.flags, index);
+      this.glyphIterator.reset(
+        lookup.flags,
+        index,
+        this.getMarkFilteringSet(lookup),
+      );
 
       // Apply lookup subtables until one matches
       let length = this.glyphs.length;
@@ -259,8 +268,33 @@ export default class OTProcessor {
 
     // Continue after the input sequence, so this lookup is not applied
     // again to glyphs it already matched or produced
-    this.glyphIterator.reset(options, end - 1);
+    this.glyphIterator.reset(options, end - 1, markFilteringSet);
     return true;
+  }
+
+  getMarkFilteringSet(lookup) {
+    if (!lookup.flags.flags.useMarkFilteringSet) {
+      return null;
+    }
+    let coverage =
+      this.font.GDEF?.markGlyphSetsDef?.coverage?.[lookup.markFilteringSet];
+    if (!coverage) {
+      return null;
+    }
+    let cache = (this._coverageSetCache ??= new Map());
+    let set = cache.get(coverage);
+    if (!set) {
+      set = new Set();
+      if (coverage.glyphs) {
+        for (let id of coverage.glyphs) set.add(id);
+      } else if (coverage.rangeRecords) {
+        for (let { start, end } of coverage.rangeRecords) {
+          for (let id = start; id <= end; id++) set.add(id);
+        }
+      }
+      cache.set(coverage, set);
+    }
+    return set;
   }
 
   coverageIndex(coverage, glyph) {
