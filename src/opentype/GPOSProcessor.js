@@ -161,9 +161,11 @@ export default class GPOSProcessor extends OTProcessor {
           return false;
         }
 
-        // search backward for a base glyph
+        // search backward for a base glyph, skipping marks and any
+        // multi-sub outputs that fail the `acceptBaseGlyph` check (see
+        // method comment for the OT-spec / HarfBuzz alignment).
         let baseGlyphIndex = this.glyphIterator.index;
-        while (--baseGlyphIndex >= 0 && (this.glyphs[baseGlyphIndex].isMark || this.glyphs[baseGlyphIndex].ligatureComponent > 0));
+        while (--baseGlyphIndex >= 0 && (this.glyphs[baseGlyphIndex].isMark || !this.acceptBaseGlyph(baseGlyphIndex)));
 
         if (baseGlyphIndex < 0) {
           return false;
@@ -270,6 +272,38 @@ export default class GPOSProcessor extends OTProcessor {
       default:
         throw new Error(`Unsupported GPOS table: ${lookupType}`);
     }
+  }
+
+  // Per HarfBuzz (OT/Layout/GPOS/MarkBasePosFormat1.hh `accept`), a glyph
+  // produced by Multiple Substitution is a valid base candidate only when
+  // it's the FIRST output of the run, OR when the previous glyph isn't an
+  // immediately-preceding sibling in the same multi-sub run. Without this,
+  // mark-to-base attaches to whichever non-mark glyph appears in the
+  // backward scan, which means a mark following a multi-sub sequence may
+  // bond to the wrong component.
+  //   https://github.com/harfbuzz/harfbuzz/issues/740
+  //   https://github.com/harfbuzz/harfbuzz/issues/1020
+  acceptBaseGlyph(index) {
+    let glyph = this.glyphs[index];
+    // ligatureComponent defaults to null on untouched glyphs — treat that
+    // the same as 0 (i.e. not a continuation).
+    if (!glyph.ligatureComponent) {
+      return true;
+    }
+    // Non-multi-sub glyphs with ligatureComponent > 0 are skipped marks /
+    // components inside an earlier ligature match — never a base.
+    if (!glyph.isMultiplied) {
+      return false;
+    }
+    // Multi-sub at index 0 has no previous glyph to break continuity with;
+    // accept.
+    if (index === 0) {
+      return true;
+    }
+    let prev = this.glyphs[index - 1];
+    return prev.isMark
+      || prev.multipliedID !== glyph.multipliedID
+      || prev.ligatureComponent !== glyph.ligatureComponent - 1;
   }
 
   applyAnchor(markRecord, baseAnchor, baseGlyphIndex) {

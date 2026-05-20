@@ -36,7 +36,19 @@ export default class GSUBProcessor extends OTProcessor {
             return true;
           }
 
+          // Tag the entire multi-sub run with a shared multipliedID so the
+          // mark-positioning `acceptBaseGlyph` check in GPOSProcessor can
+          // recognise adjacent outputs as belonging to the same Multiple
+          // Substitution. A dedicated field (separate from ligatureID)
+          // keeps the Type 4 (Ligature) post-processing below scoped to
+          // actual ligature outputs. Note: `isMultiplied` is intentionally
+          // left false on sequence[0] — Indic / USE shapers distinguish
+          // "the letter itself" (substituted but not multiplied) from
+          // decomposition components, and flipping that would change
+          // their categorisation.
+          let multipliedID = this.ligatureID++;
           this.glyphIterator.cur.id = sequence[0];
+          this.glyphIterator.cur.multipliedID = multipliedID;
           this.glyphIterator.cur.ligatureComponent = 0;
 
           let features = this.glyphIterator.cur.features;
@@ -45,6 +57,7 @@ export default class GSUBProcessor extends OTProcessor {
             let glyph = new GlyphInfo(this.font, gid, undefined, features);
             glyph.shaperInfo = curGlyph.shaperInfo;
             glyph.isLigated = curGlyph.isLigated;
+            glyph.multipliedID = multipliedID;
             glyph.ligatureComponent = i + 1;
             glyph.substituted = true;
             glyph.isMultiplied = true;

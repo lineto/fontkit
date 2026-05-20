@@ -25,6 +25,7 @@ export default class GlyphInfo {
     this.shaperInfo = null;
     this.substituted = false;
     this.isMultiplied = false;
+    this.multipliedID = null;
   }
 
   get id() {
