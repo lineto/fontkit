@@ -20,6 +20,15 @@ export default class GlyphRun {
     this.positions = null;
 
     /**
+     * An array of GlyphInfo objects parallel to `glyphs`, carrying the features
+     * the shaper applied to each glyph (isol/init/medi/fina, ssNN, …) along with
+     * its codePoints and ligature flags. Populated by the layout engine after
+     * substitution; `null` until then.
+     * @type {GlyphInfo[]}
+     */
+    this.glyphInfos = null;
+
+    /**
      * The script that was requested for shaping. This was either passed in or detected automatically.
      * @type {string}
      */
