@@ -66,6 +66,12 @@ export default class OTLayoutEngine {
       // Map glyph infos back to normal Glyph objects
       glyphRun.glyphs = this.glyphInfos.map(glyphInfo => this.font.getGlyph(glyphInfo.id, glyphInfo.codePoints));
     }
+
+    // Surface the shaped GlyphInfos so callers can read the features the shaper
+    // applied to each glyph (isol/init/medi/fina, ssNN, …), plus codePoints and
+    // ligature flags. The Glyph objects above come from a shared cache and must
+    // not be annotated; the GlyphInfos are per-run and safe to expose.
+    glyphRun.glyphInfos = this.glyphInfos;
   }
 
   position(glyphRun) {
@@ -85,6 +91,7 @@ export default class OTLayoutEngine {
     if (glyphRun.direction === 'rtl') {
       glyphRun.glyphs.reverse();
       glyphRun.positions.reverse();
+      glyphRun.glyphInfos.reverse();
     }
 
     return this.GPOSProcessor && this.GPOSProcessor.features;
