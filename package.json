@@ -1,6 +1,9 @@
 {
   "name": "fontkit",
-  "version": "2.0.4",
+  "version": "2.0.4-lineto.3",
+  "publishConfig": {
+    "@lineto:registry": "https://gitlab.com/api/v4/projects/83374393/packages/npm/"
+  },
   "description": "An advanced font engine for Node and the browser",
   "keywords": [
     "opentype",
