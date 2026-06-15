@@ -1,0 +1,20 @@
+stages:
+  - deploy
+
+# Builds the fork and publishes @lineto/fontkit to this project's
+# GitLab npm registry. CI_JOB_TOKEN automatically has write access to the
+# project's own registry, and npm (unlike pnpm) expands it from the committed
+# .npmrc. Runs when package.json changes on the `lineto` branch.
+publish:
+  image: node:22
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "lineto"'
+      changes:
+        - package.json
+  script:
+    - npm ci
+    - npm run build
+    # The repo keeps upstream's name, which its tests import by:
+    - npm pkg set name=@lineto/fontkit
+    - npm publish
