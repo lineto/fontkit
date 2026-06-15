@@ -776,4 +776,15 @@ describe('shaping', function () {
       assert.deepEqual(glyphs.map(g => g.name), ['uni064B.small', 'uni0651', 'uni0627']);
     });
   });
+
+  describe('FeatureVariations', function () {
+    it('applies FeatureVariations at the default variation location', function () {
+      // TestFeatureVariations.ttf's rvrn feature substitutes A -> A.alt under a
+      // condition set covering the default location. HarfBuzz applies it; so
+      // must fontkit, even with no explicit variation instance selected.
+      let font = fontkit.openSync(new URL('data/fonttest/TestFeatureVariations.ttf', import.meta.url));
+      let { glyphs } = font.layout('A');
+      assert.deepEqual(glyphs.map(g => g.name), ['A.alt']);
+    });
+  });
 });
