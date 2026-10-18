@@ -26,7 +26,8 @@ export default class ShapingPlan {
 
   /**
    * Adds the given features to the last stage.
-   * Ignores features that have already been applied.
+   * Features that have already been added keep their stage, but become
+   * global if added globally, e.g. by user overrides.
    */
   _addFeatures(features, global) {
     let stageIndex = this.stages.length - 1;
@@ -35,10 +36,10 @@ export default class ShapingPlan {
       if (this.allFeatures[feature] == null) {
         stage.push(feature);
         this.allFeatures[feature] = stageIndex;
+      }
 
-        if (global) {
-          this.globalFeatures[feature] = true;
-        }
+      if (global) {
+        this.globalFeatures[feature] = true;
       }
     }
   }
