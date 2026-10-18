@@ -5,6 +5,11 @@ to the GitLab npm registry. Versions are `<upstream-base>-lineto.<n>`: the
 `<upstream-base>` is the upstream release this build is based on, and `-lineto.<n>`
 is our own counter on top of it (collision-proof with upstream's own releases).
 
+## 2.0.4-lineto.4
+
+- Keep default ignorables that GSUB substituted, e.g. a soft hyphen's `case` form
+  (#406)
+
 ## 2.0.4-lineto.3
 
 - Rebuilt on the current foliojs/fontkit master (unreleased after **2.0.4**), which

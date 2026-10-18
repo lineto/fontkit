@@ -3337,4 +3337,21 @@ describe('shaping', function () {
       );
     });
   });
+
+  describe('default ignorables', function () {
+    let font = fontkit.openSync(
+      new URL('data/FiraSans/FiraSans-Regular.ttf', import.meta.url),
+    );
+    let names = (text, features) =>
+      font.layout(text, features).glyphs.map((g) => g.name);
+
+    it('hides a soft hyphen', function () {
+      assert.deepEqual(names('A\u00adB'), ['A', 'space', 'B']);
+    });
+
+    it('keeps a soft hyphen substituted by GSUB', function () {
+      // As in HarfBuzz, `case` replaces it with a visible form:
+      assert.deepEqual(names('A\u00adB', ['case']), ['A', 'uni00AD.case', 'B']);
+    });
+  });
 });
