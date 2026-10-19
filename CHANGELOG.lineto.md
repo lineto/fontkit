@@ -5,6 +5,13 @@ to the GitLab npm registry. Versions are `<upstream-base>-lineto.<n>`: the
 `<upstream-base>` is the upstream release this build is based on, and `-lineto.<n>`
 is our own counter on top of it (collision-proof with upstream's own releases).
 
+## 2.0.4-lineto.5
+
+- Keep glyph caches per variation, so a variation no longer returns the parent's
+  ligature and composed glyphs (#377)
+- Cache font metrics per variation, so MVAR applies to variations of a font whose
+  metrics were read
+
 ## 2.0.4-lineto.4
 
 - Keep default ignorables that GSUB substituted, e.g. a soft hyphen's `case` form
