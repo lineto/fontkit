@@ -367,10 +367,10 @@ export default class GPOSProcessor extends OTProcessor {
     return { x, y };
   }
 
-  applyFeatures(featureTags, glyphs, advances, userFeatures) {
-    super.applyFeatures(featureTags, glyphs, advances, userFeatures);
-
-    for (var i = 0; i < this.glyphs.length; i++) {
+  fixAttachments(glyphs, positions) {
+    this.glyphs = glyphs;
+    this.positions = positions;
+    for (let i = 0; i < glyphs.length; i++) {
       this.fixCursiveAttachment(i);
     }
 

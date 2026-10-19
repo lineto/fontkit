@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+- Ignore the advances of marks zeroed after GPOS when positioning attached marks
 - Fix canonical composition fallback, Arabic mark ordering, and positioning in fonts without GSUB
 - Reorder combining marks like HarfBuzz, with its modified combining classes and Arabic modifier marks first
 - Fix extra quadratic segments in TrueType contours with off-curve endpoints

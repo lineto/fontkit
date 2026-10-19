@@ -5,6 +5,11 @@ to the GitLab npm registry. Versions are `<upstream-base>-lineto.<n>`: the
 `<upstream-base>` is the upstream release this build is based on, and `-lineto.<n>`
 is our own counter on top of it (collision-proof with upstream's own releases).
 
+## 2.0.4-lineto.6
+
+- Resolve mark attachments after zeroing mark advances, so stacked marks and Hebrew
+  vowels are placed as in HarfBuzz (#407)
+
 ## 2.0.4-lineto.5
 
 - Keep glyph caches per variation, so a variation no longer returns the parent's
