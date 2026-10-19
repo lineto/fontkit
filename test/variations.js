@@ -262,6 +262,23 @@ describe('variations', function () {
         .path.toSVG();
       assert.equal(lightAgain, light);
     });
+
+    it('does not share glyphs requested with other code points', function () {
+      let font = fontkit.openSync(
+        new URL('data/fonttest/TestGVAROne.ttf', import.meta.url),
+      );
+      // Layout maps the text to glyphs, then requests ligatures and composed
+      // glyphs with their input code points, cached separately per font:
+      let { id } = font.glyphsForString('彌')[0];
+      let codePoints = [0x5f4c, 0x20];
+      let original = font.getGlyph(id, codePoints).path.toSVG();
+      let variation = font.getVariation({ wght: 300 });
+      variation.glyphsForString('彌');
+      assert.notEqual(
+        variation.getGlyph(id, codePoints).path.toSVG(),
+        original,
+      );
+    });
   });
 
   describe('CFF2 variations', function () {

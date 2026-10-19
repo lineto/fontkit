@@ -665,6 +665,7 @@ export default class TTFFont {
     Object.assign(font, this);
     font.variationCoords = coords;
     font._glyphs = {};
+    font._glyphsByCharacters = {};
     font._installTableGetters();
     return font;
   }
