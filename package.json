@@ -1,6 +1,6 @@
 {
   "name": "fontkit",
-  "version": "3.0.0",
+  "version": "3.0.0-lineto.1",
   "publishConfig": {
     "@lineto:registry": "https://gitlab.com/api/v4/projects/83374393/packages/npm/"
   },
