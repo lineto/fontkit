@@ -5,6 +5,34 @@ to the GitLab npm registry. Versions are `<upstream-base>-lineto.<n>`: the
 `<upstream-base>` is the upstream release this build is based on, and `-lineto.<n>`
 is our own counter on top of it (collision-proof with upstream's own releases).
 
+## 2.0.4-lineto.7
+
+- Rebuilt on the current foliojs/fontkit master (unreleased after **2.0.4**), which
+  now includes all our upstream PRs (#294, #324, #338, #370, #371, #372, #373,
+  #381, #405, #406, #407, #410, #411), so these are no longer Lineto patches
+- Upstream's own changes: an ESM-only Node build, `core` and `formats/*` exports,
+  and fflate instead of tiny-inflate
+- Fork-only patches: MVAR, STAT, useTypoMetrics, vhea/maxp/post versions, empty
+  glyph coordinates, FeatureVariations boundary drift, GlyphInfos on the GlyphRun,
+  font metrics cached per variation
+
+## 2.0.4-lineto.6
+
+- Resolve mark attachments after zeroing mark advances, so stacked marks and Hebrew
+  vowels are placed as in HarfBuzz (#407)
+
+## 2.0.4-lineto.5
+
+- Keep glyph caches per variation, so a variation no longer returns the parent's
+  ligature and composed glyphs (#377)
+- Cache font metrics per variation, so MVAR applies to variations of a font whose
+  metrics were read
+
+## 2.0.4-lineto.4
+
+- Keep default ignorables that GSUB substituted, e.g. a soft hyphen's `case` form
+  (#406)
+
 ## 2.0.4-lineto.3
 
 - Rebuilt on the current foliojs/fontkit master (unreleased after **2.0.4**), which
