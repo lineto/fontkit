@@ -351,6 +351,19 @@ describe('variations', function () {
     });
   });
 
+  describe('MVAR', function () {
+    let font = fontkit.openSync(
+      new URL('data/Mada/Mada-VF.ttf', import.meta.url),
+    );
+
+    it('applies its adjustments to variations of a font in use', function () {
+      // Read the default metrics first, which a variation must not reuse:
+      assert.equal(font.xHeight, 489);
+      let { xHeight } = font.getVariation({ wght: 900 });
+      assert.equal(Math.round(xHeight * 100) / 100, 497.71);
+    });
+  });
+
   describe('RuderPlakatLLVar', function () {
     let font;
     // A Lineto font, read from a lineto checkout next to this repository:

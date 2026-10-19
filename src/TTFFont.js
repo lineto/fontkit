@@ -110,10 +110,6 @@ export class TTFFont {
   }
 
   _getMetrics() {
-    if (this._metrics) {
-      return this._metrics;
-    }
-
     let { 'OS/2': os2, hhea } = this;
     let useTypoMetrics = os2.fsSelection.useTypoMetrics;
     let ascent, descent, lineGap, lineHeight;
@@ -154,14 +150,14 @@ export class TTFFont {
     let capHeight = os2 ? applyAdjustment(os2.capHeight, 'cpht') : this.ascent;
     let xHeight = os2 ? applyAdjustment(os2.xHeight, 'xhgt') : 0;
 
-    return (this._metrics = {
+    return {
       ascent,
       descent,
       lineGap,
       lineHeight,
       capHeight,
       xHeight,
-    });
+    };
   }
 
   /**
@@ -722,4 +718,5 @@ cache(TTFFont, {
   namedVariations: 'once',
   _variationProcessor: 'once',
   _metricsVariationAdjustments: 'once',
+  _getMetrics: 'once',
 });
