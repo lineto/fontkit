@@ -1,9 +1,10 @@
 # @lineto/fontkit changelog
 
 Lineto's fork of [foliojs/fontkit](https://github.com/foliojs/fontkit), published
-to the GitLab npm registry. Versions are `<upstream-base>-lineto.<n>`: the
-`<upstream-base>` is the upstream release this build is based on, and `-lineto.<n>`
-is our own counter on top of it (collision-proof with upstream's own releases).
+to the lineto npm registry on git.lineto.com. Versions are
+`<upstream-base>-lineto.<n>`: the `<upstream-base>` is the upstream release this
+build is based on, and `-lineto.<n>` is our own counter on top of it
+(collision-proof with upstream's own releases).
 
 ## 3.0.0-lineto.1
 
